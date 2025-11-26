@@ -5,11 +5,16 @@ on: [push]
 jobs:
   build:
     runs-on: ubuntu-latest
-    
-    steps:
-    - name: Say Hello
-      run: echo "The pipeline is working!"
-        
-    - name: Lint with Flake8
-      run: flake8 . --count --select=E1,F4 --show-source --statistics
 
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Say Hello
+        run: echo "The pipeline is working!"
+
+      - name: Install Flake8
+        run: pip install flake8
+
+      - name: Lint with Flake8
+        run: flake8 . --count --select=E1,F4 --show-source --statistics
