@@ -1,6 +1,5 @@
-# app.py
 from flask import Flask, jsonify, request, render_template, make_response
-import json
+# import json  # ❌ tidak dipakai, hapus saja
 
 # A simple in-memory dictionary to simulate a database for our pets
 pets = {}
@@ -43,7 +42,11 @@ def handle_pets():
     if request.method == 'GET':
         category = request.args.get('category')
         if category:
-            matching_pets = [pet for pet in pets.values() if pet['category'] == category]
+            # ✅ pencarian kategori case-insensitive
+            matching_pets = [
+                pet for pet in pets.values()
+                if pet.get('category', '').lower() == category.lower()
+            ]
             return jsonify(matching_pets)
         
         return jsonify(list(pets.values()))
@@ -55,7 +58,8 @@ def update_pet(pet_id):
     Updates an existing pet.
     """
     if pet_id not in pets:
-      return jsonify({"message": f"Pet with ID {pet_id} not found"}), 404
+        # ✅ indent 4 spasi di dalam blok if
+        return jsonify({"message": f"Pet with ID {pet_id} not found"}), 404
     
     data = request.get_json()
     pet = pets[pet_id]
@@ -86,12 +90,12 @@ def reset_pets():
     return response
     
 @app.route('/shutdown')
-def shutdown(): # pragma: no cover
+def shutdown():  # pragma: no cover
     """Shuts down the server gracefully for testing purposes."""
     func = request.environ.get('werkzeug.server.shutdown')
     if func is not None:
         func()
     return 'Server shutting down...'
 
-if __name__ == '__main__': # pragma: no cover
+if __name__ == '__main__':  # pragma: no cover
     app.run(debug=True, host='0.0.0.0', port=5000)
